@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(GS_ENGINE C VERSION 0.0.1)
+project(GS_ENGINE LANGUAGES C VERSION 0.0.1)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -8,8 +8,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+add_compile_definitions(-DGS_ENGINE_COMPILE)
 
-add_subdirectory(vendor)
+add_subdirectory(vendor/stb)
+add_subdirectory(vendor/xxHash/cmake_unofficial)
 
 file(GLOB_RECURSE GS_ENGINE_SRC src/*.c)
 add_library(${PROJECT_NAME} SHARED ${GS_ENGINE_SRC})

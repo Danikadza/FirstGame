@@ -9,7 +9,7 @@
     cd FirstGame
     mkdir build
     cd build
-    cmake -DGC_WIN32 ..
+    cmake -DGS_WIN32 ..
 ```
 
 ### For Linux:
@@ -18,5 +18,5 @@
     cd FirstGame
     mkdir build
     cd build
-    cmake -DGC_LINUX ..
+    cmake -DGS_LINUX ..
 ```
