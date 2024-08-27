@@ -6,7 +6,12 @@
 
 LRESULT CALLBACK WndProc(HWND hwnd,UINT wm,WPARAM wParam,LPARAM lParam)
 {
-    return DefWindowProc(hwnd,wm,wParam,lParam);
+    switch (wm)
+    {
+    default:
+        return DefWindowProc(hwnd,wm,wParam,lParam);
+    }
+    return 0;
 }
 
 #elif defined(__linux__)

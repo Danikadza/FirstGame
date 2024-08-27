@@ -92,6 +92,13 @@ GS_API void GS_WindowDestroy(GS_Window** window)
     *window = NULL;
 }
 
+GS_API void GS_WindowSetShouldClose(GS_Window* window,bool should)
+{
+    if(!window)
+        return;
+    window->isRunning = !should;
+}
+
 GS_API bool GS_WindowShouldClose(GS_Window* window)
 {
     if(!window)

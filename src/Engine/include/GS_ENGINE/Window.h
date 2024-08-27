@@ -12,6 +12,7 @@ typedef struct GS_WindowNativeHandle GS_WindowNativeHandle;
 GS_API GS_Window* GS_WindowCreate(const char* title,unsigned int width,unsigned int height);
 GS_API void GS_WindowDestroy(GS_Window** window); 
 
+GS_API void GS_WindowSetShouldClose(GS_Window* window,bool should);
 GS_API bool GS_WindowShouldClose(GS_Window* window);
 GS_API void GS_WindowPollEvents(GS_Window* window);
 
