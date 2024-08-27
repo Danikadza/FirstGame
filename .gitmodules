@@ -1,3 +1,0 @@
-[submodule "src/Engine/vendor/xxHash"]
-	path = src/Engine/vendor/xxHash
-	url = git@github.com:Cyan4973/xxHash.git
