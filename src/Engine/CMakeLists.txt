@@ -11,9 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 add_compile_definitions(-DGS_ENGINE_COMPILE)
 
 add_subdirectory(vendor/stb)
-add_subdirectory(vendor/xxHash/cmake_unofficial)
 
 file(GLOB_RECURSE GS_ENGINE_SRC src/*.c)
 add_library(${PROJECT_NAME} SHARED ${GS_ENGINE_SRC})
-target_link_libraries(${PROJECT_NAME} PUBLIC xxHash STB)
+target_link_libraries(${PROJECT_NAME} PUBLIC STB)
 target_include_directories(${PROJECT_NAME} PUBLIC include/)
