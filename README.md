@@ -7,7 +7,7 @@
 ```bash
     git clone --recursive -j4 git@github.com:Danikadza/FirstGame.git 
     cd FirstGame
-    mkdir build
+    mkdir build && mkdir bin
     cd build
     cmake -DGS_WIN32 ..
 ```
@@ -16,7 +16,7 @@
 ```bash
     git clone --recursive -j4 git@github.com:Danikadza/FirstGame.git 
     cd FirstGame
-    mkdir build
+    mkdir build && mkdir bin
     cd build
     cmake -DGS_LINUX ..
 ```
