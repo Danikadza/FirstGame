@@ -86,10 +86,13 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
         return NULL;
     }
 
+    RECT windowRect = {0, 0, ret->data.width, ret->data.height};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, 0);
+
     ret->handle->hwnd = CreateWindowEx(
         WS_EX_LEFT, TEXT("GS_ENGINE_CLASS"), TEXT(ret->data.title),
-        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, ret->data.width,
-        ret->data.height, NULL, NULL, ret->handle->hInstance, NULL);
+        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+        NULL, NULL, ret->handle->hInstance, NULL);
 
     if (!ret->handle->hwnd)
     {
@@ -174,8 +177,10 @@ GS_API void GS_WindowSetWidth(GS_Window *window, unsigned int width)
     if (!width)
         return;
     window->data.width = width;
-    SetWindowPos(window->handle->hwnd, HWND_TOPMOST, 0, 0, window->data.width,
-                 window->data.height,
+    RECT windowRect = {0, 0, window->data.width, window->data.height};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, 0);
+    SetWindowPos(window->handle->hwnd, HWND_TOPMOST, 0, 0, windowRect.right - windowRect.left,
+                 windowRect.bottom - windowRect.top,
                  SWP_SHOWWINDOW | SWP_FRAMECHANGED | SWP_DRAWFRAME);
 }
 
@@ -186,8 +191,10 @@ GS_API void GS_WindowSetHeight(GS_Window *window, unsigned int height)
     if (!height)
         return;
     window->data.height = height;
-    SetWindowPos(window->handle->hwnd, HWND_TOPMOST, 0, 0, window->data.width,
-                 window->data.height,
+    RECT windowRect = {0, 0, window->data.width, window->data.height};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, 0);
+    SetWindowPos(window->handle->hwnd, HWND_TOPMOST, 0, 0, windowRect.right - windowRect.left,
+                 windowRect.bottom - windowRect.top,
                  SWP_SHOWWINDOW | SWP_FRAMECHANGED | SWP_DRAWFRAME);
 }
 

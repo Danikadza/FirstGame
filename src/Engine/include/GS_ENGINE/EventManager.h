@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define GS_TOTAL_EVENT_TYPES 1024
+#define GS_TOTAL_EVENT_TYPES 2048
 
 typedef enum
 {
@@ -19,7 +19,8 @@ typedef enum
     GS_MouseButtonReleasedEvent,
     GS_KeyPressedEvent,
     GS_KeyReleasedEvent,
-    GS_UserEvent0 = 256
+    GS_RendererEvent0 = 256,
+    GS_UserEvent0 = 512,
 } GS_EventType;
 
 typedef union
