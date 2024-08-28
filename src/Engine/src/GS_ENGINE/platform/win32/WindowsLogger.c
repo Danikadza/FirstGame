@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 struct GS_Logger
 {
@@ -15,13 +16,13 @@ struct GS_Logger
     FILE *out;
 };
 
-const char *TColors[] = {"[44m",   "[30m", "[34m", "[33m",
-                         "[vc31m", "[41m", "[0m"};
+const int TColors[] = {44, 30, 34, 33,
+                       31, 41, 0};
 
 GS_API void GS_LoggerInitialize()
 {
-    gsEngineLogger = GS_LoggerCreate("Engine", stdout, true, true, 512);
-    gsGameLogger = GS_LoggerCreate("Game", stdout, true, true, 512);
+    gsEngineLogger = GS_LoggerCreate("Engine", stdout, true, false, 512);
+    gsGameLogger = GS_LoggerCreate("Game", stdout, true, false, 512);
 }
 
 GS_API void GS_LoggerDeinitialize()
@@ -71,6 +72,7 @@ GS_API void GS_LoggerLog(GS_Logger *logger, GS_LogLevel level,
     memset(tmp, 0, logger->bufferSize);
     char *tmp1 = malloc(logger->bufferSize);
     memset(tmp1, 0, logger->bufferSize);
+    HANDLE hConsole;
     if (!tmp)
     {
         va_end(args);
@@ -78,7 +80,11 @@ GS_API void GS_LoggerLog(GS_Logger *logger, GS_LogLevel level,
     }
     if (logger->colored && (logger->out == stdout || logger->out == stderr))
     {
-        strcat(tmp1, TColors[level]);
+        if (logger->out == stdout)
+            hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        else if (logger->out == stderr)
+            hConsole = GetStdHandle(STD_ERROR_HANDLE);
+        SetConsoleTextAttribute(hConsole, TColors[level]);
     }
     if (logger->name)
     {
@@ -87,21 +93,20 @@ GS_API void GS_LoggerLog(GS_Logger *logger, GS_LogLevel level,
         strcat(tmp1, "]: ");
     }
     vsnprintf(tmp, logger->bufferSize, format, args);
-    if (logger->filled + strlen(tmp) + strlen(tmp1) + strlen(TColors[6]) + 1 >=
+    if (logger->filled + strlen(tmp) + strlen(tmp1) + 1 >=
         logger->bufferSize)
         GS_LoggerFlush(logger);
     strcpy(&logger->buffer[logger->filled], tmp1);
     logger->filled += strlen(tmp1);
     strcpy(&logger->buffer[logger->filled], tmp);
     logger->filled += strlen(tmp);
-    strcpy(&logger->buffer[logger->filled], TColors[6]);
-    logger->filled += strlen(TColors[6]);
     strcpy(&logger->buffer[logger->filled], "\n");
     logger->filled += strlen("\n");
     if (logger->immedeate)
         GS_LoggerFlush(logger);
     free(tmp);
     free(tmp1);
+    SetConsoleTextAttribute(hConsole, TColors[6]);
 }
 
 GS_API void GS_LoggerAssert(GS_Logger *logger, bool expression,
@@ -123,6 +128,7 @@ GS_API void GS_LoggerFlush(GS_Logger *logger)
         return;
     if (!logger->filled)
         return;
+    HANDLE hConsole;
     fprintf(logger->out, "%s", logger->buffer);
     memset(logger->buffer, 0, logger->bufferSize);
     logger->filled = 0;

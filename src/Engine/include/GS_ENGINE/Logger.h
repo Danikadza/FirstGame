@@ -30,17 +30,17 @@ GS_API void GS_LoggerAssert(GS_Logger *logger, bool expression,
 GS_API void GS_LoggerFlush(GS_Logger *logger);
 GS_API void GS_LoggerDestroy(GS_Logger **p_logger);
 
-extern GS_Logger *gsEngineLogger;
-extern GS_Logger *gsGameLogger;
+GS_API extern GS_Logger *gsEngineLogger;
+GS_API extern GS_Logger *gsGameLogger;
 
 #if defined(GS_DEBUG)
-#define GS_ENGINE_LOG(level, format, ...)                                      \
+#define GS_ENGINE_LOG(level, format, ...) \
     GS_LoggerLog(gsEngineLogger, level, format, __VA_ARGS__)
-#define GS_GAME_LOG(level, format, ...)                                        \
+#define GS_GAME_LOG(level, format, ...) \
     GS_LoggerLog(gsGameLogger, level, format, __VA_ARGS__)
-#define GS_ENGINE_ASSERT(expression, message)                                  \
+#define GS_ENGINE_ASSERT(expression, message) \
     GS_LoggerAssert(gsEngineLogger, expression, message)
-#define GS_GAME_ASSERT(expression, message)                                    \
+#define GS_GAME_ASSERT(expression, message) \
     GS_LoggerAssert(gsGameLogger, expression, message)
 #else
 #define GS_ENGINE_LOG(level, format, ...)

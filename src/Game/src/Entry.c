@@ -9,6 +9,8 @@ int main()
     GS_Window *window = GS_WindowCreate("GS_ENGINE", 800, 600);
 
     GS_ENGINE_LOG(GS_WarnLevel, "%s", "Hi!");
+    GS_ENGINE_LOG(GS_InfoLevel, "%s", "Hi!");
+    GS_ENGINE_LOG(GS_FatalLevel, "%s", "Hi!");
 
     while (!GS_WindowShouldClose(window))
     {
