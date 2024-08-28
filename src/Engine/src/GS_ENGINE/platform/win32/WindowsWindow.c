@@ -1,5 +1,7 @@
 #ifdef _WIN32
 #include <GS_ENGINE/WindowNativeHandle.h>
+#include <GS_ENGINE/EventManager.h>
+#include <GS_ENGINE/Logger.h>
 #include <assert.h>
 #include <string.h>
 
@@ -16,6 +18,33 @@ struct GS_Window
     GS_WindowData data;
     bool isRunning;
 };
+
+bool onWindowClose(GS_EventType type, void *sender,
+                   void *listener, GS_EventContext ctx)
+{
+    if (type != GS_WindowCloseEvent)
+        return false;
+    if (!listener)
+        return false;
+    GS_ENGINE_LOG(GS_InfoLevel, "%s", "Window is Closing...");
+    GS_Window *wind = (GS_Window *)listener;
+    GS_WindowSetShouldClose(wind, true);
+    return true;
+}
+
+bool onWindowResize(GS_EventType type, void *sender,
+                    void *listener, GS_EventContext ctx)
+{
+    if (type != GS_WindowResizeEvent)
+        return false;
+    if (!listener)
+        return NULL;
+    GS_ENGINE_LOG(GS_InfoLevel, "%s", "Window is Resizing...");
+    GS_Window *wind = (GS_Window *)listener;
+    wind->data.width = ctx.ui16[0];
+    wind->data.height = ctx.ui16[1];
+    return true;
+}
 
 GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
                                   unsigned int height)
@@ -73,6 +102,10 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
     ShowWindow(ret->handle->hwnd, SW_SHOW);
     UpdateWindow(ret->handle->hwnd);
     ret->isRunning = true;
+
+    GS_EventManagerRegisterCallback(GS_WindowCloseEvent, ret, onWindowClose);
+    GS_EventManagerRegisterCallback(GS_WindowResizeEvent, ret, onWindowResize);
+
     return ret;
 }
 

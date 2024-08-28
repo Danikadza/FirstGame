@@ -12,10 +12,7 @@ typedef enum
 {
     GS_NullEvent = 0,
     GS_WindowCloseEvent,
-    GS_WindowNameChangedEvent,
     GS_WindowResizeEvent,
-    GS_WindowFocusEvent,
-    GS_WindowUnfocusEvent,
     GS_MouseMovedEvent,
     GS_MouseScrolledEvent,
     GS_MouseButtonPressedEvent,
