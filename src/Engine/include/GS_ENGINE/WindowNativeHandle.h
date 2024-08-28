@@ -6,9 +6,9 @@
 #if defined(_WIN32)
 #include <Windows.h>
 
-LRESULT CALLBACK WndProc(HWND hwnd,UINT wm,WPARAM wParam,LPARAM lParam);
+LRESULT CALLBACK WndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam);
 
-struct GS_WindowNativeHandle 
+struct GS_WindowNativeHandle
 {
     WNDCLASSEX wc;
     HWND hwnd;
@@ -16,12 +16,27 @@ struct GS_WindowNativeHandle
 };
 
 #elif defined(__linux__)
-#error "PLATFORM NOT SUPPORTED"
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+struct GS_WindowNativeHandle
+{
+    Display *display;
+    int screen;
+    Window root;
+    Visual *visual;
+    Colormap colormap;
+    XSetWindowAttributes attribs;
+    Window window;
+    XSizeHints *hints;
+};
+
 #else
 #error "PLATFORM NOT SUPPORTED"
 #endif
 
-GS_WindowNativeHandle* GS_WindowNativeHandleCreate();
-void GS_WindowNativeHandleDestroy(GS_WindowNativeHandle** p_handle);
+GS_WindowNativeHandle *GS_WindowNativeHandleCreate();
+void GS_WindowNativeHandleDestroy(GS_WindowNativeHandle **p_handle);
 
 #endif
