@@ -1,6 +1,5 @@
 #include <GS_ENGINE/EventManager.h>
 #include <GS_ENGINE/Window.h>
-#include <stdio.h>
 
 int main()
 {
@@ -11,7 +10,6 @@ int main()
     {
         GS_WindowPollEvents(window);
     }
-    printf("%d\n", GS_WindowGetTime(window));
     GS_WindowDestroy(&window);
     GS_EventManagerDestroy();
 }
