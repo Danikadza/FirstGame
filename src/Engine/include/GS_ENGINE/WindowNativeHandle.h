@@ -30,6 +30,7 @@ struct GS_WindowNativeHandle
     XSetWindowAttributes attribs;
     Window window;
     XSizeHints *hints;
+    Atom wmDeleteMessage;
 };
 
 #else

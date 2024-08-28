@@ -62,6 +62,11 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
         DefaultDepth(ret->handle->display, ret->handle->screen), InputOutput,
         ret->handle->visual, CWColormap | CWEventMask, &ret->handle->attribs);
 
+    ret->handle->wmDeleteMessage =
+        XInternAtom(ret->handle->display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(ret->handle->display, ret->handle->window,
+                    &ret->handle->wmDeleteMessage, 1);
+
     XMapWindow(ret->handle->display, ret->handle->window);
     XStoreName(ret->handle->display, ret->handle->window, ret->data.title);
 
@@ -118,8 +123,21 @@ GS_API void GS_WindowPollEvents(GS_Window *window)
         return;
     while (XPending(window->handle->display))
     {
-        XEvent xev;
-        XNextEvent(window->handle->display, &xev);
+        XEvent event;
+        XNextEvent(window->handle->display, &event);
+        switch (event.type)
+        {
+        case Expose:
+            break;
+
+        case ClientMessage:
+            if (event.xclient.data.l[0] == window->handle->wmDeleteMessage)
+                GS_WindowSetShouldClose(window, true);
+            break;
+
+        default:
+            break;
+        }
     }
 }
 
