@@ -3,12 +3,14 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct
 {
     unsigned int width;
     unsigned int height;
     const char *title;
+    struct timespec startTime;
 } GS_WindowData;
 
 struct GS_Window
@@ -89,6 +91,12 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
                       ret->handle->hints);
 
     ret->isRunning = true;
+    if (clock_gettime(CLOCK_MONOTONIC, &ret->data.startTime) == -1)
+    {
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
     return ret;
 }
 
@@ -200,4 +208,17 @@ GS_API void GS_WindowSetTitle(GS_Window *window, const char *title)
     XStoreName(window->handle->display, window->handle->window,
                window->data.title);
 }
+
+GS_API const uint64_t GS_WindowGetTime(GS_Window *window)
+{
+    if (!window)
+        return 0;
+    struct timespec time;
+    if (clock_gettime(CLOCK_MONOTONIC, &time) == -1)
+        return 0;
+    return (time.tv_sec * 1000000 + time.tv_nsec / 1000) -
+           (window->data.startTime.tv_sec * 1000000 +
+            window->data.startTime.tv_nsec / 1000);
+}
+
 #endif
