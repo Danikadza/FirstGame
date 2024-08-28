@@ -1,4 +1,5 @@
 #ifdef __linux__
+#include <GS_ENGINE/Logger.h>
 #include <GS_ENGINE/WindowNativeHandle.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -43,6 +44,8 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
     ret->handle->display = XOpenDisplay(NULL);
     if (!ret->handle->display)
     {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Failed To Open X11 Display");
         GS_WindowNativeHandleDestroy(&ret->handle);
         free(ret);
         return NULL;
@@ -75,6 +78,8 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
     ret->handle->hints = XAllocSizeHints();
     if (!ret->handle->hints)
     {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Failed To Allocate X11 Hints");
         GS_WindowNativeHandleDestroy(&ret->handle);
         free(ret);
         return NULL;
@@ -93,6 +98,8 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
     ret->isRunning = true;
     if (clock_gettime(CLOCK_MONOTONIC, &ret->data.startTime) == -1)
     {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Failed To Get X11 Time");
         GS_WindowNativeHandleDestroy(&ret->handle);
         free(ret);
         return NULL;
@@ -103,9 +110,17 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
 GS_API void GS_WindowDestroy(GS_Window **window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid pointer to window passed");
         return;
+    }
     if (!*window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return;
+    }
     GS_WindowNativeHandleDestroy(&(*window)->handle);
     free(*window);
     *window = NULL;
@@ -114,21 +129,33 @@ GS_API void GS_WindowDestroy(GS_Window **window)
 GS_API void GS_WindowSetShouldClose(GS_Window *window, bool should)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return;
+    }
     window->isRunning = !should;
 }
 
 GS_API bool GS_WindowShouldClose(GS_Window *window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return true;
+    }
     return !window->isRunning;
 }
 
 GS_API void GS_WindowPollEvents(GS_Window *window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return;
+    }
     while (XPending(window->handle->display))
     {
         XEvent event;
@@ -152,30 +179,50 @@ GS_API void GS_WindowPollEvents(GS_Window *window)
 GS_API const unsigned int GS_WindowGetWidth(GS_Window *window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return 0;
+    }
     return window->data.width;
 }
 
 GS_API const unsigned int GS_WindowGetHeight(GS_Window *window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return 0;
+    }
     return window->data.height;
 }
 
 GS_API const char *GS_WindowGetTitle(GS_Window *window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return "";
+    }
     return window->data.title;
 }
 
 GS_API void GS_WindowSetWidth(GS_Window *window, unsigned int width)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return;
+    }
     if (!width)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid width passed");
         return;
+    }
     window->data.width = width;
     window->handle->hints->min_width = window->handle->hints->max_width =
         window->data.width;
@@ -187,9 +234,17 @@ GS_API void GS_WindowSetWidth(GS_Window *window, unsigned int width)
 GS_API void GS_WindowSetHeight(GS_Window *window, unsigned int height)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return;
+    }
     if (!height)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid height passed");
         return;
+    }
     window->data.height = height;
     window->handle->hints->min_height = window->handle->hints->max_height =
         window->data.height;
@@ -201,9 +256,17 @@ GS_API void GS_WindowSetHeight(GS_Window *window, unsigned int height)
 GS_API void GS_WindowSetTitle(GS_Window *window, const char *title)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return;
+    }
     if (!title)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid title passed");
         return;
+    }
     window->data.title = title;
     XStoreName(window->handle->display, window->handle->window,
                window->data.title);
@@ -212,10 +275,17 @@ GS_API void GS_WindowSetTitle(GS_Window *window, const char *title)
 GS_API const uint64_t GS_WindowGetTime(GS_Window *window)
 {
     if (!window)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s",
+                     "Invalid window passed");
         return 0;
+    }
     struct timespec time;
     if (clock_gettime(CLOCK_MONOTONIC, &time) == -1)
+    {
+        GS_LoggerLog(gsEngineLogger, GS_ErrorLevel, "%s", "Failed To Get Time");
         return 0;
+    }
     return (time.tv_sec * 1000000 + time.tv_nsec / 1000) -
            (window->data.startTime.tv_sec * 1000000 +
             window->data.startTime.tv_nsec / 1000);
