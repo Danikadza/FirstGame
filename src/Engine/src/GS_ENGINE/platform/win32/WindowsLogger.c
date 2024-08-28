@@ -1,4 +1,4 @@
-#ifdef __linux__
+#ifdef _WIN32
 #include <GS_ENGINE/Logger.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -15,8 +15,8 @@ struct GS_Logger
     FILE *out;
 };
 
-const char *TColors[] = {"\033[90m", "\033[37m",  "\033[34m", "\033[93m",
-                         "\033[91m", "\033[101m", "\033[0m"};
+const char *TColors[] = {"[44m",   "[30m", "[34m", "[33m",
+                         "[vc31m", "[41m", "[0m"};
 
 GS_API void GS_LoggerInitialize()
 {
