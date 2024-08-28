@@ -153,6 +153,9 @@
 #define GS_LAUNCH_MEDIA_SELECT 0xB5 // Select Media key
 #define GS_LAUNCH_APP1 0xB6         // Start Application 1 key
 #define GS_LAUNCH_APP2 0xB7         // Start Application 2 key
+
+#define VK_TO_GS_KEY(VK_KEY) (VK_KEY)
+
 #elif __linux__
 #error "Not Implemented Yet"
 #endif
