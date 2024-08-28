@@ -4,10 +4,11 @@
 
 int main()
 {
-    gsEngineLogger = GS_LoggerCreate("Engine", stdout, true, true, 512);
-    gsGameLogger = GS_LoggerCreate("Game", stdout, true, true, 512);
+    GS_LoggerInitialize();
     GS_EventManagerCreate();
     GS_Window *window = GS_WindowCreate("GS_ENGINE", 800, 600);
+
+    GS_ENGINE_LOG(GS_WarnLevel, "%s", "Hi!");
 
     while (!GS_WindowShouldClose(window))
     {
@@ -15,6 +16,5 @@ int main()
     }
     GS_WindowDestroy(&window);
     GS_EventManagerDestroy();
-    GS_LoggerDestroy(&gsEngineLogger);
-    GS_LoggerDestroy(&gsGameLogger);
+    GS_LoggerDeinitialize();
 }

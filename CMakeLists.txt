@@ -9,5 +9,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-DGS_DEBUG)
+endif()
+
 add_subdirectory(src/Engine)
 add_subdirectory(src/Game)

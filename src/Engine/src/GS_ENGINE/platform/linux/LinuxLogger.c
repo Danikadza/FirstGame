@@ -17,6 +17,18 @@ struct GS_Logger
 const char *TColors[] = {"\033[90m", "\033[37m",  "\033[34m", "\033[93m",
                          "\033[91m", "\033[101m", "\033[0m"};
 
+GS_API void GS_LoggerInitialize()
+{
+    gsEngineLogger = GS_LoggerCreate("Engine", stdout, true, true, 512);
+    gsGameLogger = GS_LoggerCreate("Game", stdout, true, true, 512);
+}
+
+GS_API void GS_LoggerDeinitialize()
+{
+    GS_LoggerDestroy(&gsEngineLogger);
+    GS_LoggerDestroy(&gsGameLogger);
+}
+
 GS_API GS_Logger *GS_LoggerCreate(const char *name, FILE *out, bool immedeate,
                                   bool colored, unsigned int bufferSize)
 {
