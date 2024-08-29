@@ -20,8 +20,8 @@ const char *TColors[] = {"\033[90m", "\033[37m",  "\033[34m", "\033[93m",
 
 GS_API void GS_LoggerInitialize()
 {
-    gsEngineLogger = GS_LoggerCreate("Engine", stdout, true, true, 512);
-    gsGameLogger = GS_LoggerCreate("Game", stdout, true, true, 512);
+    gsEngineLogger = GS_LoggerCreate("Engine", stdout, true, true, 1024);
+    gsGameLogger = GS_LoggerCreate("Game", stdout, true, true, 1024);
 }
 
 GS_API void GS_LoggerDeinitialize()
@@ -134,6 +134,7 @@ GS_API void GS_LoggerDestroy(GS_Logger **p_logger)
         return;
     if (!*p_logger)
         return;
+    GS_LoggerFlush(*p_logger);
     if ((*p_logger)->name)
         free((*p_logger)->name);
     free((*p_logger)->buffer);

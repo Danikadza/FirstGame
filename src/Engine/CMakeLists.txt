@@ -10,10 +10,14 @@ add_compile_definitions(-DGS_ENGINE_COMPILE)
 
 add_subdirectory(vendor/stb)
 
+find_package(Vulkan REQUIRED)
+
 file(GLOB_RECURSE GS_ENGINE_SRC src/*.c)
 add_library(${PROJECT_NAME} SHARED ${GS_ENGINE_SRC})
-target_link_libraries(${PROJECT_NAME} PUBLIC STB)
-target_include_directories(${PROJECT_NAME} PUBLIC include/)
+target_link_libraries(${PROJECT_NAME} PUBLIC STB ${Vulkan_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC
+include/
+${Vulkan_INCLUDE_DIRS})
 
 if(LINUX)
     find_package(X11 REQUIRED)
