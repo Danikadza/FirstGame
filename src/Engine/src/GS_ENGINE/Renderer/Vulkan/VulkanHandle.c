@@ -29,6 +29,7 @@ struct GS_VulkanHandle
 {
     VkInstance instance;
     VkDebugUtilsMessengerEXT debugMessenger;
+    VkPhysicalDevice physicalDevice;
 };
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL GS_DebugCallback(
@@ -201,17 +202,56 @@ bool GS_VulkanCreateInstance(GS_VulkanHandle *handle)
     return true;
 }
 
+bool GS_IsDeviceSuitable()
+{
+    return true;
+}
+
+bool GS_PickPhysicalDevice(GS_VulkanHandle *handle)
+{
+    if (!handle)
+    {
+        GS_ENGINE_LOG(GS_ErrorLevel, "%s", "Invalid VulkanHandle Passed");
+        return false;
+    }
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(handle->instance, &deviceCount, NULL);
+    if (!deviceCount)
+    {
+        GS_ENGINE_LOG(GS_ErrorLevel, "%s",
+                      "Failed To Find GPU With Vulkan Support");
+        return false;
+    }
+    VkPhysicalDevice *devices = malloc(sizeof(VkPhysicalDevice) * deviceCount);
+    if (!devices)
+    {
+        GS_ENGINE_LOG(GS_ErrorLevel, "%s",
+                      "Failed To Allocate Memory For VkPhysicalDevice");
+        return false;
+    }
+    vkEnumeratePhysicalDevices(handle->instance, &deviceCount, devices);
+
+    return true;
+}
+
 bool GS_VulkanInit(GS_VulkanHandle *handle)
 {
     if (!GS_VulkanCreateInstance(handle))
         return false;
     if (!GS_SetupDebugMessenger(handle))
         return false;
+    if (!GS_PickPhysicalDevice(handle))
+        return false;
     return true;
 }
 
 bool GS_VulkanCleanUp(GS_VulkanHandle *handle)
 {
+    if (!handle)
+    {
+        GS_ENGINE_LOG(GS_ErrorLevel, "%s", "Invalid VulkanHandle Passed");
+        return false;
+    }
     if (GS_EnableValidationLayers)
         GS_DestroyDebugUtilsMessengerEXT(handle->instance,
                                          handle->debugMessenger, NULL);

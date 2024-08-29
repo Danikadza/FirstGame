@@ -11,6 +11,12 @@ int main()
     GS_Renderer *renderer = GS_RendererCreate();
     GS_RendererDestroy(&renderer);
 
+    GS_Window *window = GS_WindowCreate("Oleg LOX", 1280, 720);
+    while (!GS_WindowShouldClose(window))
+    {
+        GS_WindowPollEvents(window);
+    }
+    GS_WindowDestroy(&window);
     GS_EventManagerDestroy();
     GS_LoggerDeinitialize();
 }
