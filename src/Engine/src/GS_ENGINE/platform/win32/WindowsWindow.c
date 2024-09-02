@@ -72,7 +72,7 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
     ret->handle->wc.hInstance = ret->handle->hInstance;
     ret->handle->wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     ret->handle->wc.hCursor = LoadCursor(NULL, IDC_UPARROW);
-    ret->handle->wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+    ret->handle->wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     ret->handle->wc.lpszMenuName = NULL;
     ret->handle->wc.lpszClassName = TEXT("GS_ENGINE_CLASS");
     ret->handle->wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);

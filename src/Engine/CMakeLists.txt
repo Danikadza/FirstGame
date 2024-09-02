@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_compile_definitions(-DGS_ENGINE_COMPILE) 
+add_compile_definitions(-DGS_ENGINE_COMPILE)
 
 add_subdirectory(vendor/stb)
 
@@ -14,7 +14,7 @@ find_package(Vulkan REQUIRED)
 
 file(GLOB_RECURSE GS_ENGINE_SRC src/*.c)
 add_library(${PROJECT_NAME} SHARED ${GS_ENGINE_SRC})
-target_link_libraries(${PROJECT_NAME} PUBLIC STB ${Vulkan_LIBRARIES} -static)
+target_link_libraries(${PROJECT_NAME} PUBLIC STB ${Vulkan_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC
 include/
 ${Vulkan_INCLUDE_DIRS})
