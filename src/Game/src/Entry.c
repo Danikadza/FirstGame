@@ -7,7 +7,7 @@ int main()
     GS_LoggerInitialize();
     GS_EventManagerCreate();
 
-    GS_Window *window = GS_WindowCreate("Oleg LOX", 1280, 720);
+    GS_Window *window = GS_WindowCreate("GS_ENGINE", 1280, 720);
     while (!GS_WindowShouldClose(window))
     {
         GS_WindowPollEvents(window);
