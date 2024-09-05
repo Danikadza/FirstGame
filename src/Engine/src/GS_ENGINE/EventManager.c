@@ -10,7 +10,7 @@ typedef struct
 
 typedef struct
 {
-    GS_EventType type;
+    unsigned int type;
     Subscriber *subscribers;
 } Subscription;
 
@@ -52,7 +52,7 @@ void GS_EventManagerDestroy()
     gsEventManager = NULL;
 }
 
-void GS_EventManagerRegisterCallback(GS_EventType type, void *listener,
+void GS_EventManagerRegisterCallback(unsigned int type, void *listener,
                                      GS_EventCallback callback)
 {
     if (type < 0 || type >= GS_TOTAL_EVENT_TYPES)
@@ -81,7 +81,7 @@ void GS_EventManagerRegisterCallback(GS_EventType type, void *listener,
     stbds_arrput(gsEventManager->subscriptions[type].subscribers, sub);
 }
 
-void GS_EventManagerUnregisterCallback(GS_EventType type, void *listener,
+void GS_EventManagerUnregisterCallback(unsigned int type, void *listener,
                                        GS_EventCallback callback)
 {
     if (type < 0 || type >= GS_TOTAL_EVENT_TYPES)
@@ -111,7 +111,7 @@ void GS_EventManagerUnregisterCallback(GS_EventType type, void *listener,
     }
 }
 
-void GS_EventManagerFireEvent(GS_EventType type, void *sender,
+void GS_EventManagerFireEvent(unsigned int type, void *sender,
                               GS_EventContext ctx)
 {
     if (type < 0 || type >= GS_TOTAL_EVENT_TYPES)

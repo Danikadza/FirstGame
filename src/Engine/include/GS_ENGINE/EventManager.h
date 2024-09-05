@@ -38,7 +38,7 @@ typedef union
     char c[32];
 } GS_EventContext;
 
-typedef bool (*GS_EventCallback)(GS_EventType type, void *sender,
+typedef bool (*GS_EventCallback)(unsigned int type, void *sender,
                                  void *listener, GS_EventContext ctx);
 typedef struct GS_EventManager GS_EventManager;
 
@@ -47,11 +47,11 @@ extern GS_EventManager *gsEventManager;
 GS_API void GS_EventManagerCreate();
 GS_API void GS_EventManagerDestroy();
 
-GS_API void GS_EventManagerRegisterCallback(GS_EventType type, void *listener,
+GS_API void GS_EventManagerRegisterCallback(unsigned int type, void *listener,
                                             GS_EventCallback callback);
-GS_API void GS_EventManagerUnregisterCallback(GS_EventType type, void *listener,
+GS_API void GS_EventManagerUnregisterCallback(unsigned int type, void *listener,
                                               GS_EventCallback callback);
-GS_API void GS_EventManagerFireEvent(GS_EventType type, void *sender,
+GS_API void GS_EventManagerFireEvent(unsigned int type, void *sender,
                                      GS_EventContext ctx);
 
 #endif

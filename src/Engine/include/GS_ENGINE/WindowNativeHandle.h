@@ -6,8 +6,6 @@
 #if defined(_WIN32)
 #include <Windows.h>
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam);
-
 struct GS_WindowNativeHandle
 {
     WNDCLASSEX wc;

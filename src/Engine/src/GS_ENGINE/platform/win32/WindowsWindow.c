@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <string.h>
 
+LRESULT CALLBACK WndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam);
+
 typedef struct
 {
     unsigned int width;
