@@ -16,6 +16,7 @@ typedef struct
 
 struct GS_Window
 {
+    GS_WindowGraphicsContext *context;
     GS_WindowNativeHandle *handle;
     GS_WindowData data;
     bool isRunning;
@@ -104,6 +105,95 @@ GS_API GS_Window *GS_WindowCreate(const char *title, unsigned int width,
         return NULL;
     }
 
+#if defined(GS_OPENGL_BACKEND)
+    ret->context = GS_WindowGraphicsContextCreate();
+    if (!ret->context)
+    {
+        MessageBox(NULL, TEXT("COULD NOT CREATE WINDOW CONTEXT"), NULL, MB_ICONERROR);
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
+
+    ret->context->hdc = GetDC(ret->handle->hwnd);
+    if (!ret->context->hdc)
+    {
+        MessageBox(NULL, TEXT("COULD NOT GET WINDOW CONTEXT"), NULL,
+                   MB_ICONERROR);
+        GS_WindowGraphicsContextDestroy(&ret->context, ret->handle);
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
+
+    ret->context->pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+    ret->context->pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
+    ret->context->pfd.iPixelType = PFD_TYPE_RGBA;
+    ret->context->pfd.cColorBits = 32;
+    ret->context->pfd.cDepthBits = 32;
+    ret->context->pfd.iLayerType = PFD_MAIN_PLANE;
+    int format = ChoosePixelFormat(ret->context->hdc, &ret->context->pfd);
+    if (!format || SetPixelFormat(ret->context->hdc, format, &ret->context->pfd) == FALSE)
+    {
+        MessageBox(NULL, TEXT("COULD NOT SET COMPATIBLE WINDOW PIXEL FORMAT"), NULL,
+                   MB_ICONERROR);
+        GS_WindowGraphicsContextDestroy(&ret->context, ret->handle);
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
+
+    HGLRC tmp = NULL;
+    if (NULL == (tmp = wglCreateContext(ret->context->hdc)))
+    {
+        MessageBox(NULL, TEXT("COULD NOT CREATE OPENGL CONTEXT"), NULL,
+                   MB_ICONERROR);
+        GS_WindowGraphicsContextDestroy(&ret->context, ret->handle);
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
+    wglMakeCurrent(ret->context->hdc, tmp);
+    gladLoaderLoadWGL(ret->context->hdc);
+
+    // Set the desired OpenGL version:
+    int attributes[] = {
+        WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+        WGL_CONTEXT_MINOR_VERSION_ARB, 6,
+        WGL_CONTEXT_FLAGS_ARB,
+        WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+        0};
+
+    // Create the final opengl context and get rid of the temporary one:
+    ret->context->gl_context = NULL;
+    if (NULL == (ret->context->gl_context = wglCreateContextAttribsARB(ret->context->hdc, NULL, attributes)))
+    {
+        wglDeleteContext(tmp);
+        MessageBox(NULL, TEXT("Failed to create the final rendering context!"), NULL,
+                   MB_ICONERROR);
+        GS_WindowGraphicsContextDestroy(&ret->context, ret->handle);
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
+
+    wglMakeCurrent(NULL, NULL);
+    wglDeleteContext(tmp);
+    wglMakeCurrent(ret->context->hdc, ret->context->gl_context);
+
+    if (!gladLoaderLoadGL())
+    {
+        wglMakeCurrent(NULL, NULL);
+        wglDeleteContext(ret->context->gl_context);
+        MessageBox(NULL, TEXT("Glad Loader Failed!"), NULL,
+                   MB_ICONERROR);
+        GS_WindowGraphicsContextDestroy(&ret->context, ret->handle);
+        GS_WindowNativeHandleDestroy(&ret->handle);
+        free(ret);
+        return NULL;
+    }
+#endif
+
     ShowWindow(ret->handle->hwnd, SW_SHOW);
     UpdateWindow(ret->handle->hwnd);
     ret->isRunning = true;
@@ -120,6 +210,7 @@ GS_API void GS_WindowDestroy(GS_Window **window)
         return;
     if (!*window)
         return;
+    GS_WindowGraphicsContextDestroy(&(*window)->context, (*window)->handle);
     GS_WindowNativeHandleDestroy(&(*window)->handle);
     free(*window);
     *window = NULL;
@@ -209,4 +300,14 @@ GS_API void GS_WindowSetTitle(GS_Window *window, const char *title)
     window->data.title = title;
     SetWindowText(window->handle->hwnd, TEXT(window->data.title));
 }
+
+GS_API void GS_WindowSwapBuffers(GS_Window *window)
+{
+    if (!window)
+        return;
+    if (!window->context)
+        return;
+    SwapBuffers(window->context->hdc);
+}
+
 #endif

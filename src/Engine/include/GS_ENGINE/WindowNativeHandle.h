@@ -13,6 +13,26 @@ struct GS_WindowNativeHandle
     HINSTANCE hInstance;
 };
 
+#if defined(GS_OPENGL_BACKEND)
+#include <glad/wgl.h>
+
+struct GS_WindowGraphicsContext
+{
+    HDC hdc;
+    PIXELFORMATDESCRIPTOR pfd;
+    HGLRC gl_context;
+};
+
+#elif definded(GS_VULKAN_BACKEND)
+
+struct GS_WindowGraphicsContext
+{
+};
+
+#else
+#error "UNSUPPORTED PLATFORM"
+#endif
+
 #elif defined(__linux__)
 
 #include <X11/Xlib.h>
@@ -31,11 +51,20 @@ struct GS_WindowNativeHandle
     Atom wmDeleteMessage;
 };
 
+#if defined(GS_OPENGL_BACKEND)
+#elif definded(GS_VULKAN_BACKEND)
+#else
+#error "UNSUPPORTED PLATFORM"
+#endif
+
 #else
 #error "PLATFORM NOT SUPPORTED"
 #endif
 
 GS_WindowNativeHandle *GS_WindowNativeHandleCreate();
 void GS_WindowNativeHandleDestroy(GS_WindowNativeHandle **p_handle);
+
+GS_WindowGraphicsContext *GS_WindowGraphicsContextCreate();
+void GS_WindowGraphicsContextDestroy(GS_WindowGraphicsContext **p_handle, GS_WindowNativeHandle *handle);
 
 #endif

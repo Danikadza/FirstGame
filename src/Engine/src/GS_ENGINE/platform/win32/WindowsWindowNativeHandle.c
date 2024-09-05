@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windowsx.h>
+#include <glad/wgl.h>
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam)
 {
@@ -93,9 +94,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam)
 GS_WindowNativeHandle *GS_WindowNativeHandleCreate()
 {
     GS_WindowNativeHandle *ret = malloc(sizeof(GS_WindowNativeHandle));
-    memset(ret, 0, sizeof(GS_WindowNativeHandle));
     if (!ret)
         return NULL;
+    memset(ret, 0, sizeof(GS_WindowNativeHandle));
     return ret;
 }
 
@@ -105,7 +106,41 @@ void GS_WindowNativeHandleDestroy(GS_WindowNativeHandle **p_handle)
         return;
     if (!*p_handle)
         return;
+    if ((*p_handle)->hwnd)
+        DestroyWindow((*p_handle)->hwnd);
     free(*p_handle);
     *p_handle = NULL;
 }
+
+#if defined(GS_OPENGL_BACKEND)
+GS_WindowGraphicsContext *GS_WindowGraphicsContextCreate()
+{
+    GS_WindowGraphicsContext *ret = malloc(sizeof(GS_WindowGraphicsContext));
+    if (!ret)
+        return NULL;
+    memset(ret, 0, sizeof(GS_WindowGraphicsContext));
+    return ret;
+}
+
+void GS_WindowGraphicsContextDestroy(GS_WindowGraphicsContext **p_handle, GS_WindowNativeHandle *handle)
+{
+    if (!handle)
+        return;
+    if (!p_handle)
+        return;
+    if (!*p_handle)
+        return;
+    if ((*p_handle)->gl_context)
+        wglDeleteContext((*p_handle)->gl_context);
+    if ((*p_handle)->hdc)
+        ReleaseDC(handle->hwnd, (*p_handle)->hdc);
+    free(*p_handle);
+    *p_handle = NULL;
+}
+#endif
+
+#if defined(GS_VULKAN_BACKEND)
+#error "NOT IMPLEMENTED"
+#endif
+
 #endif

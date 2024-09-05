@@ -12,11 +12,11 @@ elseif(LINUX)
     set(GLAD_SRC src/gl.c src/glx.c)
 endif()
 
-add_library(${PROJECT_NAME} STATIC ${GLAD_SRC})
+add_library(${PROJECT_NAME} SHARED ${GLAD_SRC})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include/ ${OpenGL_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenGL_LIBRARIES})
 
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenGL_LIBRARIES} gdi32 opengl32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC -lgdi32 -lopengl32)
 endif()
